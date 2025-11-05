@@ -1,0 +1,53 @@
+I understand that you are an expert in developing code for microcontrollers, specifically the espressif chips viz. esp8266 and esp32, using Arduino framework and you are familiar with the well known libraries supported for this environment.
+
+The hardware which I am using is ESP8266 connected to radio module RFM69HCW. The objective is to write the code for a gateway which recieves the radio message and after processing/parsing the same and thus preparing a proper topic and message payload, publishes the same to an MQTT broker. Also reverse of this is also true, that is subscribing to topi relecant for inwards mqtt messages, parsing the incoming message with the similar logic, sends the radio message. I may suggest to use the LowPowerLab's well known RFM69 library for this and stick to the conventions followed therein.
+
+In actual usages multiple nodes, which are also based on ESP8266 and RFM69 communicate with this gateway. All Nodes as well as gateway will  be configured with the same netowrk id. Each nodes is assumed to have disttinctive node id. The gateway may have default node id of 1 or 0 whichever is suitable as per convention.
+
+Format of the radio message (TBD)
+
+Configurable Paramenters - i.e. the variables which are configurable at run time (as per the detailed provided later) are given below, these are stored in EEPROM alongwith checksum
+
+Radio Related Connfig Vars:
+Network Id (1-255), Node Id (1-255 expert mode only), Encryption Key(16 char string), radio power (unsigned short integer expert mode only)
+
+Network related config vars:
+dhcp (boolean), ip, netmask, dns1, dns2 (all are of type ip addresses ipv4)
+
+MQTT related config vars (all variable are of expert mode)
+mqtt server (string), mqtt port (unsigned int), mqtt user (string), mqtt pass (string)
+
+AP related vars
+AP name (expert mode), AP User, AP Password
+
+In addition to the above parameters, following are other constants which will be defined using defines preprocessor directive.
+
+RFM69 radio frequency , enable_expert_config, Conf_gpio_hold_ms, conf_gpio_nm, conf_gpio_hold_state, expert mode password (string)
+
+Now, I will explain the fnctioning desired.
+
+The device will have primarily two functioning modes,
+a) Normal Mode:
+Device boots up, reads stored parameters in EEPROM, verifies stored checksum, proceeds if correct. Then attempts wifi connectivity and if everything is okay, goes on to do the normal work of gateway of inter communication between a radio message and mqtt messags. Details of parsing and topic, payloads etc will be described later. If it fails, it goes iinto configuration mode. If EEPROM checksum fails, it resets to factory settings and reboots.
+
+b) Configuration Mode:
+Device boots up, checks if a particular gpio pin is pressed (held high or low as per configuration vars) for long time ( gpio number, hold state and holde time in milliseconds as per conf_gpio_* variables) and if so, it does not do it's normal work but starts an access point, and presents a captive portal with stored portal credentials (AP User, AP Password). If stored variabls fail checksum test then 
+
+Once a user logs in to the captive portal, he is presented with home page showing some basic statittics and/or info and hyperlinks to child pages.
+
+There are multiple child pages. Each child page will give the user option to see the presently stored and used configuration variable (grouped as per functionality) and option to update the same
+at the end of each child page, there will be submit button, marked as "save" clickinh which will write the appropriate configuration updated variable(s) to EEPROM. Each child page will also have link to all child pages.
+
+Child pages will be for (a)Radio Related Config Variables, (b)Network related config variables, (c) MQTT related config variables and (d) AP (Access point) related configuration variables. 
+
+There will be additional child page - perhaps marked as (e)system, which will have one checkbox for config variable "expert mode config", 
+one text box for expert mode password and three buttons, one for save, second for reset to factory settings, and third for system reboot. When expert mode config is selected, it will also require expert mode password to be provided
+
+Now more about configuration variables.
+Each of the variables described above will have a default value, which is hard coded. First time boot is special in a way that it will create the storage in EEPROM to store the default values. Also when factory reset is executed, these hard coded values will be written in EEPROM overwriting any existing values. 
+
+Read and write to EEPROM should make use of checksum to maintain the integrity of data
+
+You might have noticed that few variables are marked (expert mode only). Whenever a configuration mode is presented using captive portal, only the variables which are not categoriacally marked as expert mode will be shown and be allowed to be updated. Only when expert mode variable is set and system boots in configuration mode, then only the variables marked as expert mode will be allowed to be shown and updated.
+
+I think you have now got a fairly good idea of the system desired. What is left is the logic / parsing of radio message and mqtt topic and payload inter-conversion. I am still thinking oon the same and will update once the above functonality is done and tested.
