@@ -46,7 +46,7 @@ A comprehensive IoT gateway that bridges RFM69 radio communication with MQTT, bu
 - Network ID (1-255) (default: 100)
 - Node ID (1-255) - Expert mode only, (default: 1)
 - Encryption Key (16 characters) (default: samplekey12345)
-- Radio Power (0-31) - Expert mode only, (default: 31)
+- Radio Power (0-31) - Expert mode only, (default:18, ~14dB, 30 ~20dB, approx.)
 
 ### Network Configuration
 - WiFi SSID and Password

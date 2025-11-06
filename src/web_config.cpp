@@ -57,6 +57,9 @@ const char* HTML_HEADER = R"(
 
 const char* HTML_FOOTER = R"(
 </div>
+<footer>
+  <p>Copyright 2025 MPS Digital Labs <a href="https://mps.in">https://mps.in</a></p>
+</footer>
 </body>
 </html>
 )";

@@ -10,7 +10,7 @@ const GatewayConfig defaultConfig = {
     100,                           // networkId
     1,                             // nodeId (Gateway node ID)
     "samplekey12345",              // encryptionKey (16 characters)
-    31,                            // radioPower (Max power, expert mode)
+    18,                            // radioPower (Max power, expert mode, 18=14dB, 30=20dB)
     
     // Network configuration defaults
     true,                          // dhcp
