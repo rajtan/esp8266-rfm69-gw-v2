@@ -32,28 +32,31 @@ A comprehensive IoT gateway that bridges RFM69 radio communication with MQTT, bu
 - **ESP8266** (ESP12E module recommended)
 - **RFM69HCW** radio module (915MHz or 868MHz)
 - **Connections**:
-  - RFM69 CS → GPIO15 (D8)
-  - RFM69 IRQ → GPIO4 (D2)
-  - RFM69 RST → GPIO2 (D4)
-  - Configuration GPIO → GPIO0 (Boot button)
+  - RFM69 CS → GPIO15 (D8 Wemos Mini)
+  - RFM69 IRQ → GPIO4 (D2 Wemos Mini)
+  - RFM69 RST → GPIO5 (D1 Wemos Mini)
+  - RFM69 MISO → GPIO12 (D6 Wemos Mini)
+  - RFM69 MOSI → GPIO13 (D7 Wemos Mini)
+  - RFM69 SCLK → GPIO14 (D5 Wemos Mini)
+  - Configuration GPIO → GPIO0 (Boot button D3 on  Wemos Mini)
 
 ## Configuration Parameters
 
 ### Radio Configuration
-- Network ID (1-255)
-- Node ID (1-255) - Expert mode only, default: 1
-- Encryption Key (16 characters)
-- Radio Power (0-31) - Expert mode only, default: 31
+- Network ID (1-255) (default: 100)
+- Node ID (1-255) - Expert mode only, (default: 1)
+- Encryption Key (16 characters) (default: samplekey12345)
+- Radio Power (0-31) - Expert mode only, (default: 31)
 
 ### Network Configuration
 - WiFi SSID and Password
-- DHCP enable/disable
+- DHCP enable/disable (default: enable)
 - Static IP Configuration (IP, Netmask, Gateway, DNS1, DNS2)
 
 ### MQTT Configuration (Expert Mode Only)
-- MQTT Server hostname/IP
-- MQTT Port (default: 1883)
-- MQTT Username and Password
+- MQTT Server hostname/IP (default: test.moosquitto.org)
+- MQTT Port (default: 1884)
+- MQTT Username and Password (default: rw / readwrite)
 
 ### Access Point Configuration
 - AP Name (Expert mode only, default: "ESP8266-Gateway")
@@ -136,13 +139,14 @@ Configuration mode can be activated by:
 Customize build-time parameters in `platformio.ini`:
 
 ```ini
-build_flags = 
-    -DRFM69_FREQUENCY=915.0        ; Radio frequency (MHz)
-    -DENABLE_EXPERT_CONFIG=false   ; Default expert mode state
-    -DCONF_GPIO_NUM=0              ; Configuration GPIO pin
-    -DCONF_GPIO_HOLD_MS=5000       ; Hold time (milliseconds)
-    -DCONF_GPIO_HOLD_STATE=LOW     ; Active state
-    -DEXPERT_MODE_PASSWORD="admin123"  ; Expert mode password
+    -D ESP8266
+    -D MQTT_MAX_PACKET_SIZE=512
+;    -D RFM69_FREQUENCY=RF69_868MHZ  ; RFM69 frequency as per defines in RFM69/RFM69.h in LowPowrLab RFM69 library
+    -D ENABLE_EXPERT_CONFIG=false   ; Enable expert configuration by default
+    -D CONF_GPIO_NUM=0              ; GPIO pin for configuration mode (GPIO0/BOOT button)
+    -D CONF_GPIO_HOLD_MS=5000       ; Hold time in milliseconds
+    -D CONF_GPIO_HOLD_STATE=LOW     ; Active state for configuration mode
+    '-D EXPERT_MODE_PASSWORD="IoT@1234"'  ; Expert mode password
 ```
 
 ## Default Configuration

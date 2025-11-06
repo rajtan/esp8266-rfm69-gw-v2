@@ -31,15 +31,15 @@ class AsyncWebServerRequest;
 
 // RFM69 Hardware pin definitions (can be overridden at compile time)
 #ifndef RFM69_CS_PIN
-#define RFM69_CS_PIN 15  // GPIO15 (D8 on NodeMCU)
+#define RFM69_CS_PIN 15  // GPIO15 (D8 on WeMos Mini)
 #endif
 
 #ifndef RFM69_IRQ_PIN
-#define RFM69_IRQ_PIN 4  // GPIO4 (D2 on NodeMCU)
+#define RFM69_IRQ_PIN 4  // GPIO4 (D2 on WeMos Mini)
 #endif
 
 #ifndef RFM69_RST_PIN
-#define RFM69_RST_PIN 5  // GPIO5 (D? on NodeMCU)
+#define RFM69_RST_PIN 5  // GPIO5 (D1 on WeMos Mini)
 #endif
 
 // Derived definitions
@@ -51,7 +51,7 @@ class AsyncWebServerRequest;
 #endif
 
 #ifndef EXPERT_MODE_PASSWORD
-#define EXPERT_MODE_PASSWORD "admin123"
+#define EXPERT_MODE_PASSWORD "IoT@1234" 
 #endif
 
 // Boot time Configuration GPIO Settings
