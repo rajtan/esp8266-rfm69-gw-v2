@@ -1,4 +1,8 @@
 
+try using gpio3 for boot mode config
+test radio comm
+change encryption key
+
 check and remap gpio pins between esp8266 and rfm69
 check and see if any gpio is available for config mode
 

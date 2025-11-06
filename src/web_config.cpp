@@ -15,22 +15,49 @@ const byte DNS_PORT = 53;
 const char* CAPTIVE_PORTAL_DOMAIN = "gateway.local";
 
 // HTML templates
-const char* HTML_HEADER = R"(
+const char* HTML_HEADER PROGMEM = R"**(
 <!DOCTYPE html>
 <html>
 <head>
     <title>ESP8266 RFM69 Gateway</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; background: #f0f0f0; }
-        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; }
+        body { font-family: Arial, sans-serif; font-size: 140%; margin: 20px; background: #f0f0f0; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 10px; border-radius: 6px; }
         .header { text-align: center; color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
-        .nav { margin: 20px 0; text-align: center; }
-        .nav a { margin: 0 10px; padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; }
+        .nav { margin: 20px 0; position: relative; }
+        .nav ul { list-style: none; margin: 0; padding: 0; display: flex; justify-content: center; flex-wrap: wrap; }
+        .nav li { margin: 5px; }
+        .nav a { display: block; padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; transition: background-color 0.3s; }
         .nav a:hover { background: #0056b3; }
+        
+        /* Hamburger menu button (hidden by default) */
+        .nav-toggle { display: none; background: #007bff; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; position: absolute; top: 0; right: 0; }
+        .nav-toggle:hover { background: #0056b3; }
+        
+        /* Mobile responsive styles */
+        @media (max-width: 768px) {
+            .nav ul { 
+                display: none; 
+                flex-direction: column; 
+                position: absolute; 
+                top: 50px; 
+                left: 0; 
+                right: 0; 
+                background: white; 
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+                border-radius: 5px; 
+                z-index: 1000;
+            }
+            .nav ul.active { display: flex; }
+            .nav li { margin: 0; }
+            .nav a { margin: 0; border-radius: 0; border-bottom: 1px solid #eee; }
+            .nav a:last-child { border-bottom: none; }
+            .nav-toggle { display: block; }
+        }
         .form-group { margin: 15px 0; }
         label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; font-size: 100%;}
         .btn { background: #28a745; color: white; padding: 12px 30px; border: none; border-radius: 5px; cursor: pointer; margin: 10px 5px; }
         .btn:hover { background: #218838; }
         .btn-danger { background: #dc3545; }
@@ -42,23 +69,51 @@ const char* HTML_HEADER = R"(
         .error { color: red; margin: 10px 0; }
     </style>
 </head>
+<script>
+function toggleNav() {
+    var navMenu = document.getElementById('nav-menu');
+    navMenu.classList.toggle('active');
+}
+
+// Close menu when clicking outside
+document.addEventListener('click', function(event) {
+    var nav = document.querySelector('.nav');
+    var navMenu = document.getElementById('nav-menu');
+    var navToggle = document.querySelector('.nav-toggle');
+    
+    if (!nav.contains(event.target)) {
+        navMenu.classList.remove('active');
+    }
+});
+
+// Close menu when window is resized to desktop size
+window.addEventListener('resize', function() {
+    var navMenu = document.getElementById('nav-menu');
+    if (window.innerWidth > 768) {
+        navMenu.classList.remove('active');
+    }
+});
+</script>
 <body>
 <div class="container">
     <h1 class="header">ESP8266 RFM69 Gateway Configuration</h1>
     <div class="nav">
-        <a href="/">Home</a>
-        <a href="/radio">Radio Config</a>
-        <a href="/network">Network Config</a>
-        <a href="/mqtt">MQTT Config</a>
-        <a href="/ap">Access Point</a>
-        <a href="/system">System</a>
+        <button class="nav-toggle" onclick="toggleNav()">☰</button>
+        <ul id="nav-menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/radio">Radio Config</a></li>
+            <li><a href="/network">Network Config</a></li>
+            <li><a href="/mqtt">MQTT Config</a></li>
+            <li><a href="/ap">Access Point</a></li>
+            <li><a href="/system">System</a></li>
+        </ul>
     </div>
-)";
+)**";
 
 const char* HTML_FOOTER = R"(
 </div>
 <footer>
-  <p>Copyright 2025 MPS Digital Labs <a href="https://mps.in">https://mps.in</a></p>
+  <p><center>Copyright 2025 MPS Digital Labs <a href="https://mps.in">https://mps.in</a></center></p>
 </footer>
 </body>
 </html>
@@ -116,7 +171,7 @@ void setupWebServer() {
 }
 
 void handleHomePage(AsyncWebServerRequest *request) {
-    String html = HTML_HEADER;
+    String html = FPSTR(HTML_HEADER);
     html += R"(
     <h2>Gateway Status</h2>
     <div class="form-group">
@@ -137,7 +192,7 @@ void handleHomePage(AsyncWebServerRequest *request) {
 }
 
 void handleRadioPage(AsyncWebServerRequest *request) {
-    String html = HTML_HEADER;
+    String html = FPSTR(HTML_HEADER);
     html += R"(
     <h2>Radio Configuration</h2>
     <form method="POST" action="/radio">
@@ -210,7 +265,7 @@ void handleRadioSave(AsyncWebServerRequest *request) {
         }
     }
     
-    String html = HTML_HEADER;
+    String html = FPSTR(HTML_HEADER);
     html += "<h2>Radio Configuration</h2>";
     html += "<div class='" + String(message.startsWith("Error") ? "error" : "success") + "'>" + message + "</div>";
     html += "<button class='btn' onclick='location.href=\"/radio\"'>Back to Radio Config</button>";
@@ -221,7 +276,7 @@ void handleRadioSave(AsyncWebServerRequest *request) {
 }
 
 void handleNetworkPage(AsyncWebServerRequest *request) {
-    String html = HTML_HEADER;
+    String html = FPSTR(HTML_HEADER);
     html += R"(
     <h2>Network Configuration</h2>
     <form method="POST" action="/network">
@@ -303,7 +358,7 @@ void handleNetworkSave(AsyncWebServerRequest *request) {
         message = "Error saving configuration";
     }
     
-    String html = HTML_HEADER;
+    String html = FPSTR(HTML_HEADER);
     html += "<h2>Network Configuration</h2>";
     html += "<div class='" + String(message.startsWith("Error") ? "error" : "success") + "'>" + message + "</div>";
     html += "<button class='btn' onclick='location.href=\"/network\"'>Back to Network Config</button>";
@@ -319,7 +374,7 @@ void handleMqttPage(AsyncWebServerRequest *request) {
         return;
     }
     
-    String html = HTML_HEADER;
+    String html = FPSTR(HTML_HEADER);
     html += R"(
     <div class="expert-only">
         <h2>MQTT Configuration (Expert Mode)</h2>
@@ -385,7 +440,7 @@ void handleMqttSave(AsyncWebServerRequest *request) {
         message = "Error saving configuration";
     }
     
-    String html = HTML_HEADER;
+    String html = FPSTR(HTML_HEADER);
     html += "<h2>MQTT Configuration</h2>";
     html += "<div class='" + String(message.startsWith("Error") ? "error" : "success") + "'>" + message + "</div>";
     html += "<button class='btn' onclick='location.href=\"/mqtt\"'>Back to MQTT Config</button>";
@@ -396,7 +451,7 @@ void handleMqttSave(AsyncWebServerRequest *request) {
 }
 
 void handleApPage(AsyncWebServerRequest *request) {
-    String html = HTML_HEADER;
+    String html = FPSTR(HTML_HEADER);
     html += R"(
     <h2>Access Point Configuration</h2>
     <form method="POST" action="/ap">
@@ -457,7 +512,7 @@ void handleApSave(AsyncWebServerRequest *request) {
         message = "Error saving configuration";
     }
     
-    String html = HTML_HEADER;
+    String html = FPSTR(HTML_HEADER);
     html += "<h2>Access Point Configuration</h2>";
     html += "<div class='" + String(message.startsWith("Error") ? "error" : "success") + "'>" + message + "</div>";
     html += "<button class='btn' onclick='location.href=\"/ap\"'>Back to AP Config</button>";
@@ -468,7 +523,7 @@ void handleApSave(AsyncWebServerRequest *request) {
 }
 
 void handleSystemPage(AsyncWebServerRequest *request) {
-    String html = HTML_HEADER;
+    String html = FPSTR(HTML_HEADER);
     html += "<h2>System Configuration</h2>";
     html += "<form method='POST' action='/system'>";
     html += "<div class='form-group'>";
@@ -516,7 +571,7 @@ void handleSystemAction(AsyncWebServerRequest *request) {
         }
     } else if (action == "reboot") {
         message = "System is rebooting...";
-        String rebootHtml = String(HTML_HEADER) + "<h2>System Reboot</h2><p>" + message + "</p>" + String(HTML_FOOTER);
+        String rebootHtml = String(FPSTR(HTML_HEADER)) + "<h2>System Reboot</h2><p>" + message + "</p>" + String(HTML_FOOTER);
         request->send(200, "text/html", rebootHtml);
         delay(1000);
         ESP.restart();
@@ -524,14 +579,14 @@ void handleSystemAction(AsyncWebServerRequest *request) {
     } else if (action == "factory-reset") {
         factoryReset();
         message = "Factory reset completed. System is rebooting...";
-        String resetHtml = String(HTML_HEADER) + "<h2>Factory Reset</h2><p>" + message + "</p>" + String(HTML_FOOTER);
+        String resetHtml = String(FPSTR(HTML_HEADER)) + "<h2>Factory Reset</h2><p>" + message + "</p>" + String(HTML_FOOTER);
         request->send(200, "text/html", resetHtml);
         delay(1000);
         ESP.restart();
         return;
     }
     
-    String html = HTML_HEADER;
+    String html = FPSTR(HTML_HEADER);
     html += "<h2>System Configuration</h2>";
     html += "<div class='" + String(message.startsWith("Error") ? "error" : "success") + "'>" + message + "</div>";
     html += "<button class='btn' onclick='location.href=\"/system\"'>Back to System Config</button>";
