@@ -8,6 +8,8 @@
 class AsyncWebServerRequest;
 
 // Compile-time constants (if not already from build flags)
+
+// Radio related defines
 #ifndef RFM69_FREQUENCY
 // #define RFM69_FREQUENCY     RF69_315MHZ             // 31
 // #define RFM69_FREQUENCY     RF69_433MHZ             // 43
@@ -27,28 +29,6 @@ class AsyncWebServerRequest;
 //#define RFM69_ENABLE_ATC    1  // Uncomment to enable ATC, 
 #endif
 
-
-#ifndef ENABLE_EXPERT_CONFIG
-#define ENABLE_EXPERT_CONFIG false
-#endif
-
-#ifndef EXPERT_MODE_PASSWORD
-#define EXPERT_MODE_PASSWORD "admin123"
-#endif
-
-
-#ifndef CONF_GPIO_NUM
-#define CONF_GPIO_NUM 0
-#endif
-
-#ifndef CONF_GPIO_HOLD_MS
-#define CONF_GPIO_HOLD_MS 5000
-#endif
-
-#ifndef CONF_GPIO_HOLD_STATE
-#define CONF_GPIO_HOLD_STATE LOW
-#endif
-
 // RFM69 Hardware pin definitions (can be overridden at compile time)
 #ifndef RFM69_CS_PIN
 #define RFM69_CS_PIN 15  // GPIO15 (D8 on NodeMCU)
@@ -64,6 +44,28 @@ class AsyncWebServerRequest;
 
 // Derived definitions
 #define RFM69_IRQN digitalPinToInterrupt(RFM69_IRQ_PIN)
+
+// General Directives
+#ifndef ENABLE_EXPERT_CONFIG
+#define ENABLE_EXPERT_CONFIG false
+#endif
+
+#ifndef EXPERT_MODE_PASSWORD
+#define EXPERT_MODE_PASSWORD "admin123"
+#endif
+
+// Boot time Configuration GPIO Settings
+#ifndef CONF_GPIO_NUM
+#define CONF_GPIO_NUM 0
+#endif
+
+#ifndef CONF_GPIO_HOLD_MS
+#define CONF_GPIO_HOLD_MS 5000
+#endif
+
+#ifndef CONF_GPIO_HOLD_STATE
+#define CONF_GPIO_HOLD_STATE LOW
+#endif
 
 // Configuration structure version for EEPROM compatibility
 #define CONFIG_VERSION 1

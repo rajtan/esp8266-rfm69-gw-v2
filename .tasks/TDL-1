@@ -1,9 +1,7 @@
-Tasks to do 
-increase mqtt size to 512
+
 check and remap gpio pins between esp8266 and rfm69
 check and see if any gpio is available for config mode
-change radio module frequency
-check radio high power code
+
 
 work on topic and radio message structure and their remapping
 plan how the sensor nodes will be configured which are battery powered and shut down by itself

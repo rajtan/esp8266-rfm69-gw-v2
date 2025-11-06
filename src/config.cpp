@@ -7,8 +7,8 @@ const GatewayConfig defaultConfig = {
     CONFIG_VERSION,                 // version
     
     // Radio configuration defaults
-    1,                              // networkId
-    1,                              // nodeId (Gateway node ID)
+    100,                           // networkId
+    1,                             // nodeId (Gateway node ID)
     "samplekey12345",              // encryptionKey (16 characters)
     31,                            // radioPower (Max power, expert mode)
     
@@ -23,15 +23,15 @@ const GatewayConfig defaultConfig = {
     "your_wifi_password",          // wifiPassword
     
     // MQTT configuration defaults (expert mode)
-    "mqtt.broker.com",             // mqttServer
-    1883,                          // mqttPort
-    "mqtt_user",                   // mqttUser
-    "mqtt_password",               // mqttPass
+    "test.mosquitto.org",           // mqttServer
+    1884,                           // mqttPort
+    "rw",                           // mqttUser
+    "readwrite",                    // mqttPass
     
     // Access Point configuration defaults
-    "ESP8266-Gateway",             // apName (expert mode)
+    "MPSHUBV1",             // apName (expert mode)
     "admin",                       // apUser
-    "password123",                 // apPassword
+    "IoT@1234",                 // apPassword
     
     // System configuration defaults
     ENABLE_EXPERT_CONFIG,          // expertMode
