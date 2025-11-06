@@ -7,14 +7,35 @@
 // Forward declarations
 class AsyncWebServerRequest;
 
-// Compile-time constants (from build flags)
+// Compile-time constants (if not already from build flags)
 #ifndef RFM69_FREQUENCY
-#define RFM69_FREQUENCY 915.0
+// #define RFM69_FREQUENCY     RF69_315MHZ             // 31
+// #define RFM69_FREQUENCY     RF69_433MHZ             // 43
+#define RFM69_FREQUENCY     RF69_868MHZ             // 86
+// #define RFM69_FREQUENCY     RF69_915MHZ             // 91
 #endif
+
+#ifndef IS_RFM69HW_HCW          // Is it a HCW/HW Radio Chip
+#define IS_RFM69HW_HCW      1
+#endif
+
+#ifndef IS_RFM69_SPY_MODE       // Should we operate in RFM69 Spy mode (listening to all bands)
+#define IS_RFM69_SPY_MODE   0
+#endif
+
+#ifndef RFM69_ENABLE_ATC         // Enable Automatic Transmission Control of Radio
+//#define RFM69_ENABLE_ATC    1  // Uncomment to enable ATC, 
+#endif
+
 
 #ifndef ENABLE_EXPERT_CONFIG
 #define ENABLE_EXPERT_CONFIG false
 #endif
+
+#ifndef EXPERT_MODE_PASSWORD
+#define EXPERT_MODE_PASSWORD "admin123"
+#endif
+
 
 #ifndef CONF_GPIO_NUM
 #define CONF_GPIO_NUM 0
@@ -28,9 +49,21 @@ class AsyncWebServerRequest;
 #define CONF_GPIO_HOLD_STATE LOW
 #endif
 
-#ifndef EXPERT_MODE_PASSWORD
-#define EXPERT_MODE_PASSWORD "admin123"
+// RFM69 Hardware pin definitions (can be overridden at compile time)
+#ifndef RFM69_CS_PIN
+#define RFM69_CS_PIN 15  // GPIO15 (D8 on NodeMCU)
 #endif
+
+#ifndef RFM69_IRQ_PIN
+#define RFM69_IRQ_PIN 4  // GPIO4 (D2 on NodeMCU)
+#endif
+
+#ifndef RFM69_RST_PIN
+#define RFM69_RST_PIN 5  // GPIO5 (D? on NodeMCU)
+#endif
+
+// Derived definitions
+#define RFM69_IRQN digitalPinToInterrupt(RFM69_IRQ_PIN)
 
 // Configuration structure version for EEPROM compatibility
 #define CONFIG_VERSION 1

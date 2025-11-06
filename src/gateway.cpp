@@ -2,12 +2,19 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 #include <RFM69.h>
+#include <RFM69_ATC.h>
 #include <ArduinoJson.h>
 
 // Global objects for normal mode operation
 WiFiClient wifiClient;
 PubSubClient mqttClient(wifiClient);
-RFM69 radio;
+
+#ifdef RFM69_ENABLE_ATC
+    RFM69_ATC radio;
+#else 
+    RFM69 radio;
+#endif
+
 GatewayConfig activeConfig;
 
 // Connection status
@@ -23,12 +30,6 @@ unsigned long lastStatusReport = 0;
 const unsigned long MQTT_RECONNECT_INTERVAL = 5000;  // 5 seconds
 const unsigned long RADIO_CHECK_INTERVAL = 100;     // 100ms
 const unsigned long STATUS_REPORT_INTERVAL = 30000; // 30 seconds
-
-// RFM69 pin definitions (adjust according to your wiring)
-#define RFM69_CS      15  // GPIO15 (D8 on NodeMCU)
-#define RFM69_IRQ     4   // GPIO4  (D2 on NodeMCU)
-#define RFM69_IRQN    digitalPinToInterrupt(RFM69_IRQ)
-#define RFM69_RST     2   // GPIO2  (D4 on NodeMCU)
 
 // MQTT topics
 String mqttBaseTopic;
@@ -161,18 +162,23 @@ bool connectMqtt() {
 bool initializeRadio() {
     debugLog("Initializing RFM69 radio...");
     
-    // Initialize radio with pins
+    // Initialize radio with pins from config.h
     if (!radio.initialize(RFM69_FREQUENCY, activeConfig.nodeId, activeConfig.networkId)) {
         debugLog("Radio initialization failed");
         return false;
     }
-    
+#ifdef IS_RFM69HW_HCW   
     // Set high power mode if using RFM69HCW
     radio.setHighPower();
-    
+#endif
     // Set power level (0-31)
     radio.setPowerLevel(activeConfig.radioPower);
-    
+
+#ifdef IS_RFM69_SPY_MODE   
+    // Set high power mode if using RFM69HCW
+    radio.spyMode(IS_RFM69_SPY_MODE);
+#endif
+
     // Set encryption if key is provided
     if (strlen(activeConfig.encryptionKey) > 0) {
         radio.encrypt(activeConfig.encryptionKey);
@@ -185,6 +191,7 @@ bool initializeRadio() {
     debugLog("Network ID: " + String(activeConfig.networkId));
     debugLog("Node ID: " + String(activeConfig.nodeId));
     debugLog("Power Level: " + String(activeConfig.radioPower));
+    debugLog("Pin Configuration - CS: " + String(RFM69_CS_PIN) + ", IRQ: " + String(RFM69_IRQ_PIN) + ", RST: " + String(RFM69_RST_PIN));
     
     return true;
 }
