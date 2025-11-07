@@ -140,7 +140,7 @@ bool loadConfig(GatewayConfig& config) {
     return valid;
 }
 
-void factoryReset() {
+bool factoryReset() {
     debugLog("Performing factory reset...");
     
     // Create default configuration with calculated checksum
@@ -150,8 +150,10 @@ void factoryReset() {
     // Save default configuration
     if (saveConfig(resetConfig)) {
         debugLog("Factory reset completed successfully");
+        return true ;
     } else {
         debugLog("Factory reset failed");
+        return false ;
     }
 }
 

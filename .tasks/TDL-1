@@ -1,11 +1,14 @@
 
-try using gpio3 for boot mode config
-test radio comm
-change encryption key
+* try using gpio3 for boot mode config
+* how to go to expert mode
+* try various passwords for different modes, esp exp mode changes
+* try and test changing configs
+* test radio comm
+* change encryption key
 
-check and remap gpio pins between esp8266 and rfm69
-check and see if any gpio is available for config mode
-
-
-work on topic and radio message structure and their remapping
-plan how the sensor nodes will be configured which are battery powered and shut down by itself
+* study radio message structure
+* plan on ack and repeat ack messages,
+* avoid sending mqtt messages for ack recd. 
+* Is counter needed to deduplicate to avoid duplicate mqtt messages being generated due to duplicate radio messages
+* work on topic and radio message structure and their remapping
+* plan how the sensor nodes will be configured which are battery powered and shut down by itself. These may not have message counters.

@@ -103,12 +103,24 @@ window.addEventListener('resize', function() {
             <li><a href="/">Home</a></li>
             <li><a href="/radio">Radio Config</a></li>
             <li><a href="/network">Network Config</a></li>
-            <li><a href="/mqtt">MQTT Config</a></li>
             <li><a href="/ap">Access Point</a></li>
             <li><a href="/system">System</a></li>
+)**";
+const char* HTML_HEADER_EXPERT = R"**(
+            <li><a href="/mqtt">MQTT Config</a></li>
         </ul>
     </div>
 )**";
+const char* HTML_HEADER_NORMAL = R"**(
+        </ul>
+    </div>
+)**";
+
+String getHtmlHeader() {
+    String html_header = FPSTR(HTML_HEADER);
+    html_header += (currentConfig.expertMode ? HTML_HEADER_EXPERT : HTML_HEADER_NORMAL);
+    return html_header;
+}
 
 const char* HTML_FOOTER = R"(
 </div>
@@ -171,7 +183,7 @@ void setupWebServer() {
 }
 
 void handleHomePage(AsyncWebServerRequest *request) {
-    String html = FPSTR(HTML_HEADER);
+    String html = getHtmlHeader();
     html += R"(
     <h2>Gateway Status</h2>
     <div class="form-group">
@@ -192,7 +204,7 @@ void handleHomePage(AsyncWebServerRequest *request) {
 }
 
 void handleRadioPage(AsyncWebServerRequest *request) {
-    String html = FPSTR(HTML_HEADER);
+    String html = getHtmlHeader();
     html += R"(
     <h2>Radio Configuration</h2>
     <form method="POST" action="/radio">
@@ -264,8 +276,7 @@ void handleRadioSave(AsyncWebServerRequest *request) {
             message = "Error saving configuration";
         }
     }
-    
-    String html = FPSTR(HTML_HEADER);
+    String html = getHtmlHeader();
     html += "<h2>Radio Configuration</h2>";
     html += "<div class='" + String(message.startsWith("Error") ? "error" : "success") + "'>" + message + "</div>";
     html += "<button class='btn' onclick='location.href=\"/radio\"'>Back to Radio Config</button>";
@@ -276,7 +287,8 @@ void handleRadioSave(AsyncWebServerRequest *request) {
 }
 
 void handleNetworkPage(AsyncWebServerRequest *request) {
-    String html = FPSTR(HTML_HEADER);
+    String html = getHtmlHeader();
+
     html += R"(
     <h2>Network Configuration</h2>
     <form method="POST" action="/network">
@@ -357,8 +369,7 @@ void handleNetworkSave(AsyncWebServerRequest *request) {
     } else {
         message = "Error saving configuration";
     }
-    
-    String html = FPSTR(HTML_HEADER);
+    String html = getHtmlHeader();
     html += "<h2>Network Configuration</h2>";
     html += "<div class='" + String(message.startsWith("Error") ? "error" : "success") + "'>" + message + "</div>";
     html += "<button class='btn' onclick='location.href=\"/network\"'>Back to Network Config</button>";
@@ -374,7 +385,7 @@ void handleMqttPage(AsyncWebServerRequest *request) {
         return;
     }
     
-    String html = FPSTR(HTML_HEADER);
+    String html = getHtmlHeader();
     html += R"(
     <div class="expert-only">
         <h2>MQTT Configuration (Expert Mode)</h2>
@@ -439,19 +450,17 @@ void handleMqttSave(AsyncWebServerRequest *request) {
     } else {
         message = "Error saving configuration";
     }
-    
-    String html = FPSTR(HTML_HEADER);
+    String html = getHtmlHeader();
     html += "<h2>MQTT Configuration</h2>";
     html += "<div class='" + String(message.startsWith("Error") ? "error" : "success") + "'>" + message + "</div>";
     html += "<button class='btn' onclick='location.href=\"/mqtt\"'>Back to MQTT Config</button>";
     html += "<button class='btn' onclick='location.href=\"/\"'>Home</button>";
     html += HTML_FOOTER;
-    
     request->send(200, "text/html", html);
 }
 
 void handleApPage(AsyncWebServerRequest *request) {
-    String html = FPSTR(HTML_HEADER);
+    String html = getHtmlHeader();
     html += R"(
     <h2>Access Point Configuration</h2>
     <form method="POST" action="/ap">
@@ -511,19 +520,18 @@ void handleApSave(AsyncWebServerRequest *request) {
     } else {
         message = "Error saving configuration";
     }
-    
-    String html = FPSTR(HTML_HEADER);
+    String html = getHtmlHeader();
     html += "<h2>Access Point Configuration</h2>";
     html += "<div class='" + String(message.startsWith("Error") ? "error" : "success") + "'>" + message + "</div>";
     html += "<button class='btn' onclick='location.href=\"/ap\"'>Back to AP Config</button>";
     html += "<button class='btn' onclick='location.href=\"/\"'>Home</button>";
     html += HTML_FOOTER;
-    
+
     request->send(200, "text/html", html);
 }
 
 void handleSystemPage(AsyncWebServerRequest *request) {
-    String html = FPSTR(HTML_HEADER);
+    String html = getHtmlHeader();
     html += "<h2>System Configuration</h2>";
     html += "<form method='POST' action='/system'>";
     html += "<div class='form-group'>";
@@ -547,46 +555,45 @@ void handleSystemAction(AsyncWebServerRequest *request) {
     String action = "";
     
     if (request->hasParam("action", true)) {
-        action = request->getParam("action", true)->value();
-    }
-    
-    if (action == "save") {
-        bool expertModeRequested = request->hasParam("expertMode", true);
-        String expertPassword = "";
-        
-        if (request->hasParam("expertPassword", true)) {
-            expertPassword = request->getParam("expertPassword", true)->value();
-        }
-        
-        const char* expectedPassword = EXPERT_MODE_PASSWORD;
-        if (expertModeRequested && expertPassword != String(expectedPassword)) {
-            message = "Error: Invalid expert mode password";
-        } else {
-            currentConfig.expertMode = expertModeRequested;
-            if (saveConfig(currentConfig)) {
-                message = "System configuration saved successfully!";
-            } else {
-                message = "Error saving configuration";
+        action = request->getParam("action", true)->value();    
+        if (action == "save") {
+            bool expertModeRequested = request->hasParam("expertMode", true);
+            String expertPassword = "";
+            
+            if (request->hasParam("expertPassword", true)) {
+                expertPassword = request->getParam("expertPassword", true)->value();
             }
+            
+            const char* expectedPassword = EXPERT_MODE_PASSWORD;
+            if (expertModeRequested && expertPassword != String(expectedPassword)) {
+                message = "Error: Invalid expert mode password";
+            } else {
+                currentConfig.expertMode = expertModeRequested;
+                if (saveConfig(currentConfig)) {
+                    message = "System configuration saved successfully!";
+                } else {
+                    message = "Error saving configuration";
+                }
+                String rebootHtml = getHtmlHeader() + "<h2>System Reboot</h2><p>" + message + "</p>" + String(HTML_FOOTER);
+            }        
+        } else if (action == "reboot") {
+            message = "System is rebooting...";
+            String rebootHtml = getHtmlHeader() + "<h2>System Reboot</h2><p>" + message + "</p>" + String(HTML_FOOTER);
+            request->send(200, "text/html", rebootHtml);
+            delay(1000);
+            ESP.restart();
+            return;
+        } else if (action == "factory-reset") {
+            message = "Restoring to factory default settings...";
+            message + (factoryReset() ? "Success." : "Error in setting to factory defaults.") ;
+            String resetHtml = getHtmlHeader() + "<h2>Factory Reset</h2><p>" + message + "</p>" + String(HTML_FOOTER);
+            request->send(200, "text/html", resetHtml);
+            // delay(1000);
+            // ESP.restart();
+            return;
         }
-    } else if (action == "reboot") {
-        message = "System is rebooting...";
-        String rebootHtml = String(FPSTR(HTML_HEADER)) + "<h2>System Reboot</h2><p>" + message + "</p>" + String(HTML_FOOTER);
-        request->send(200, "text/html", rebootHtml);
-        delay(1000);
-        ESP.restart();
-        return;
-    } else if (action == "factory-reset") {
-        factoryReset();
-        message = "Factory reset completed. System is rebooting...";
-        String resetHtml = String(FPSTR(HTML_HEADER)) + "<h2>Factory Reset</h2><p>" + message + "</p>" + String(HTML_FOOTER);
-        request->send(200, "text/html", resetHtml);
-        delay(1000);
-        ESP.restart();
-        return;
     }
-    
-    String html = FPSTR(HTML_HEADER);
+    String html = getHtmlHeader();
     html += "<h2>System Configuration</h2>";
     html += "<div class='" + String(message.startsWith("Error") ? "error" : "success") + "'>" + message + "</div>";
     html += "<button class='btn' onclick='location.href=\"/system\"'>Back to System Config</button>";

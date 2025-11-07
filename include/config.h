@@ -123,7 +123,7 @@ extern const GatewayConfig defaultConfig;
 // EEPROM management functions
 bool saveConfig(const GatewayConfig& config);
 bool loadConfig(GatewayConfig& config);
-void factoryReset();
+bool factoryReset();
 uint32_t calculateChecksum(const GatewayConfig& config);
 bool validateConfig(const GatewayConfig& config);
 
