@@ -96,9 +96,9 @@ window.addEventListener('resize', function() {
 </script>
 <body>
 <div class="container">
-    <h1 class="header">ESP8266 RFM69 Gateway Configuration</h1>
+    <h1 class="header">MPS Hub Gateway</h1>
     <div class="nav">
-        <button class="nav-toggle" onclick="toggleNav()">☰</button>
+        <button class="nav-toggle" onclick="toggleNav()">&#9776;</button>
         <ul id="nav-menu">
             <li><a href="/">Home</a></li>
             <li><a href="/radio">Radio Config</a></li>
@@ -290,7 +290,7 @@ void handleNetworkPage(AsyncWebServerRequest *request) {
     String html = getHtmlHeader();
 
     html += R"(
-    <h2>Network Configuration</h2>
+    <h2>Network Config</h2>
     <form method="POST" action="/network">
         <div class="form-group">
             <label>WiFi SSID:</label>
@@ -370,7 +370,7 @@ void handleNetworkSave(AsyncWebServerRequest *request) {
         message = "Error saving configuration";
     }
     String html = getHtmlHeader();
-    html += "<h2>Network Configuration</h2>";
+    html += "<h2>Network Config</h2>";
     html += "<div class='" + String(message.startsWith("Error") ? "error" : "success") + "'>" + message + "</div>";
     html += "<button class='btn' onclick='location.href=\"/network\"'>Back to Network Config</button>";
     html += "<button class='btn' onclick='location.href=\"/\"'>Home</button>";
@@ -564,7 +564,7 @@ void handleSystemAction(AsyncWebServerRequest *request) {
                 expertPassword = request->getParam("expertPassword", true)->value();
             }
             
-            const char* expectedPassword = EXPERT_MODE_PASSWORD;
+            const char* expectedPassword = DEF_CFG_ENABLE_EXPERT_CONF_PASS;
             if (expertModeRequested && expertPassword != String(expectedPassword)) {
                 message = "Error: Invalid expert mode password";
             } else {

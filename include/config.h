@@ -45,15 +45,6 @@ class AsyncWebServerRequest;
 // Derived definitions
 #define RFM69_IRQN digitalPinToInterrupt(RFM69_IRQ_PIN)
 
-// General Directives
-#ifndef ENABLE_EXPERT_CONFIG
-#define ENABLE_EXPERT_CONFIG false
-#endif
-
-#ifndef EXPERT_MODE_PASSWORD
-#define EXPERT_MODE_PASSWORD "IoT@1234" 
-#endif
-
 // Boot time Configuration GPIO Settings
 #ifndef CONF_GPIO_NUM
 #define CONF_GPIO_NUM 3     // RX pin, use with care as this is boot strapping pin
@@ -67,21 +58,60 @@ class AsyncWebServerRequest;
 #define CONF_GPIO_HOLD_STATE LOW
 #endif
 
+// Maximum string lengths
+#define MAX_STRING_LENGTH 32
+#define MAX_SSID_LENGTH 32
+#define MAX_PASSWORD_LENGTH 32
+#define ENCRYPTION_KEY_LENGTH 16
+
 // Configuration structure version for EEPROM compatibility
 #define CONFIG_VERSION 1
 #define CONFIG_MAGIC 0xDEADBEEF
 
-// Maximum string lengths
-#define MAX_STRING_LENGTH 32
-#define MAX_SSID_LENGTH 32
-#define MAX_PASSWORD_LENGTH 64
-#define ENCRYPTION_KEY_LENGTH 16
+// Deafult Config Values as constants
+#define DEF_CFG_AP_NAME                     "MPSHUBV1"              // apName (expert mode)        
+#define DEF_CFG_AP_USER                     "admin"                 // apUser
+#define DEF_CFG_AP_PASS                     "IoT@1234"              // apPassword
+#define DEF_CFG_NETWORK_ID                  100                     // Network ID
+#define DEF_CFG_NODE_ID                     1                       //(Gateway is always 1)
+#define DEF_CFG_ENCRYPTON_KEY               "samplekey12345"        //Encyption Key
+#define DEF_CFG_RADIO_POWER                 18                      // (Max power, expert mode, 18=14dB, 30=20dB)
+#define DEF_CFG_DHCP                        true                    // Use DHCP
+#define DEF_CFG_STATC_IP                    192,168,1,100           // IP Address Quad
+#define DEF_CFG_NETMASK                     255,255,255,0           // Netmask
+#define DEF_CFG_GATEWAY                     192,168,10,1            // Netmask
+#define DEF_CFG_DNS1                        8,8,8,8                 // DNS1
+#define DEF_CFG_DNS2                        8,8,4,4                 // DNS2
+#define DEF_CFG_WFI_SSID                    "your_wifi_ssid"        // WIFI SSID
+#define DEF_CFG_WIFI_PASS                   "your_wifi_passwd"      // WIFI Passwd
+#define DEF_CFG_MQTT_SERVER                 "test.mosquitto.org"    // MQTT Broker
+#define DEF_CFG_MQTT_PORT                   1884                    // MQTT Port
+#define DEF_CFG_MQTT_USER                   "rw"                    // MQTT User
+#define DEF_CFG_MQTT_PASS                   "readwrte"              // MQTT Passwd
+#define DEF_CFG_MQTT_TOPIC_PREFIX_IN        "MPSHUBV1/in/"          // MQTT Topic Prefix for Incoming
+#define DEF_CFG_MQTT_TOPIC_PREFIX_OUT       "MPSHUBV1/out/"         // MQTT Topic Prefix for Outgoing
+
+#ifndef DEF_CFG_ENABLE_EXPPERT_CONF
+#define DEF_CFG_ENABLE_EXPPERT_CONF         false                   // Expert config Mode Enabled
+#endif
+
+#ifndef DEF_CFG_ENABLE_EXPERT_CONF_PASS
+#define DEF_CFG_ENABLE_EXPERT_CONF_PASS     "1amNxpert"             // Expert Config Mode Pass
+#endif
+
+#define DEF_CFG_
+#define DEF_CFG_
 
 // Structure to hold all configuration variables
 struct GatewayConfig {
     // Magic number and version for validation
     uint32_t magic;
     uint8_t version;
+    
+    // Access Point related configuration
+    char apName[MAX_SSID_LENGTH + 1];      // expert mode only
+    char apUser[MAX_STRING_LENGTH + 1];
+    char apPassword[MAX_PASSWORD_LENGTH + 1];
     
     // Radio related configuration
     uint8_t networkId;              // 1-255
@@ -104,12 +134,9 @@ struct GatewayConfig {
     uint16_t mqttPort;
     char mqttUser[MAX_STRING_LENGTH + 1];
     char mqttPass[MAX_PASSWORD_LENGTH + 1];
-    
-    // Access Point related configuration
-    char apName[MAX_SSID_LENGTH + 1];      // expert mode only
-    char apUser[MAX_STRING_LENGTH + 1];
-    char apPassword[MAX_PASSWORD_LENGTH + 1];
-    
+    char mqttTopicPrefixIn[MAX_STRING_LENGTH + 1];
+    char mqttTopicPrefixOut[MAX_STRING_LENGTH + 1];
+
     // System configuration
     bool expertMode;                // Expert mode enable/disable
     

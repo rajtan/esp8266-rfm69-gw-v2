@@ -1,11 +1,13 @@
 
-* try using gpio3 for boot mode config
-* how to go to expert mode
-* try various passwords for different modes, esp exp mode changes
-* try and test changing configs
-* test radio comm
-* change encryption key
 
+* how to go to expert mode
+* mqtt topic prefix for in and out messages
+* try various passwords for different modes, esp exp mode changes
+* try and test changing configs - try with changes in radio, network, ap and mqtt configs
+* heartbeat
+* wdt reset
+
+* test radio comm
 * study radio message structure
 * plan on ack and repeat ack messages,
 * avoid sending mqtt messages for ack recd. 

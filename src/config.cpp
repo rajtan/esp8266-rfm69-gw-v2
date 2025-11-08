@@ -6,35 +6,37 @@ const GatewayConfig defaultConfig = {
     CONFIG_MAGIC,                   // magic
     CONFIG_VERSION,                 // version
     
+    // Access Point configuration defaults
+    DEF_CFG_AP_NAME,                // apName (expert mode)
+    DEF_CFG_AP_USER,                // apUser
+    DEF_CFG_AP_PASS,                // apPassword
+    
     // Radio configuration defaults
-    100,                           // networkId
-    1,                             // nodeId (Gateway node ID)
-    "samplekey12345",              // encryptionKey (16 characters)
-    18,                            // radioPower (Max power, expert mode, 18=14dB, 30=20dB)
+    DEF_CFG_NETWORK_ID,             // networkId
+    DEF_CFG_NODE_ID,                // nodeId (Gateway is always 1)
+    DEF_CFG_ENCRYPTON_KEY,          // encryptionKey (16 characters)
+    DEF_CFG_RADIO_POWER,            // radioPower (Max power, expert mode, 18=14dB, 30=20dB)
     
     // Network configuration defaults
-    true,                          // dhcp
-    IPAddress(192, 168, 1, 100),   // staticIP
-    IPAddress(255, 255, 255, 0),   // netmask
-    IPAddress(192, 168, 1, 1),     // gateway
-    IPAddress(8, 8, 8, 8),         // dns1
-    IPAddress(8, 8, 4, 4),         // dns2
-    "your_wifi_ssid",              // wifiSSID
-    "your_wifi_password",          // wifiPassword
+    DEF_CFG_DHCP,                   // dhcp
+    IPAddress(DEF_CFG_STATC_IP),    // staticIP
+    IPAddress(DEF_CFG_NETMASK),     // netmask
+    IPAddress(DEF_CFG_GATEWAY),     // gateway
+    IPAddress(DEF_CFG_DNS1),        // dns1
+    IPAddress(DEF_CFG_DNS2),        // dns2
+    DEF_CFG_WFI_SSID,               // wifiSSID
+    DEF_CFG_WIFI_PASS,              // wifiPassword
     
     // MQTT configuration defaults (expert mode)
-    "test.mosquitto.org",           // mqttServer
-    1884,                           // mqttPort
-    "rw",                           // mqttUser
-    "readwrite",                    // mqttPass
-    
-    // Access Point configuration defaults
-    "MPSHUBV1",             // apName (expert mode)
-    "admin",                       // apUser
-    "IoT@1234",                 // apPassword
+    DEF_CFG_MQTT_SERVER,            // mqttServer
+    DEF_CFG_MQTT_PORT,              // mqttPort
+    DEF_CFG_MQTT_USER,              // mqttUser
+    DEF_CFG_MQTT_PASS,              // mqttPass
+    DEF_CFG_MQTT_TOPIC_PREFIX_IN,   // mqttTopicPrexixIn
+    DEF_CFG_MQTT_TOPIC_PREFIX_OUT,  // mqttTopicPrefixOut
     
     // System configuration defaults
-    ENABLE_EXPERT_CONFIG,          // expertMode
+    DEF_CFG_ENABLE_EXPPERT_CONF,    // expertMode
     
     0                              // checksum (will be calculated)
 };
