@@ -87,7 +87,7 @@ class AsyncWebServerRequest;
 #define DEF_CFG_MQTT_SERVER                 "test.mosquitto.org"    // MQTT Broker
 #define DEF_CFG_MQTT_PORT                   1884                    // MQTT Port
 #define DEF_CFG_MQTT_USER                   "rw"                    // MQTT User
-#define DEF_CFG_MQTT_PASS                   "readwrte"              // MQTT Passwd
+#define DEF_CFG_MQTT_PASS                   "readwrite"              // MQTT Passwd
 #define DEF_CFG_MQTT_TOPIC_PREFIX_IN        "MPSHUBV1/in/"          // MQTT Topic Prefix for Incoming
 #define DEF_CFG_MQTT_TOPIC_PREFIX_OUT       "MPSHUBV1/out/"         // MQTT Topic Prefix for Outgoing
 

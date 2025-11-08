@@ -117,7 +117,7 @@ bool initializeMQTT() {
         return false;
     }
     
-    debugLog("Initializing MQTT connection...");
+    debugLog("Initializing MQTT connection... "+String(activeConfig.mqttServer)+":"+String(activeConfig.mqttPort));
     
     mqttClient.setServer(activeConfig.mqttServer, activeConfig.mqttPort);
     mqttClient.setCallback(onMqttMessage);
@@ -130,7 +130,9 @@ bool connectMqtt() {
         return false;
     }
     
-    String clientId = "ESP8266Gateway-" + String(activeConfig.nodeId);
+    // String clientId = "ESP8266GW-" + String(activeConfig.nodeId);
+    // Modfied to get unique Client Id
+    String clientId = String(activeConfig.apName) + String(ESP.getChipId());
     
     bool connected = false;
     if (strlen(activeConfig.mqttUser) > 0) {
