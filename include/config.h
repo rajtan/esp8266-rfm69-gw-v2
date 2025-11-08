@@ -56,7 +56,7 @@ class AsyncWebServerRequest;
 
 // Boot time Configuration GPIO Settings
 #ifndef CONF_GPIO_NUM
-#define CONF_GPIO_NUM 0
+#define CONF_GPIO_NUM 3     // RX pin, use with care as this is boot strapping pin
 #endif
 
 #ifndef CONF_GPIO_HOLD_MS
