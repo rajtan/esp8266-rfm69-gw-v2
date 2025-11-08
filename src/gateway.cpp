@@ -197,12 +197,28 @@ bool initializeRadio() {
 }
 
 void setupMqttTopics() {
-    mqttBaseTopic = "gateway/" + String(activeConfig.nodeId);
+    // Use configured topic prefixes instead of hardcoded ones
+    String inPrefix = String(activeConfig.mqttTopicPrefixIn);
+    String outPrefix = String(activeConfig.mqttTopicPrefixOut);
+    
+    // Ensure prefixes end with '/' if not empty
+    if (inPrefix.length() > 0 && !inPrefix.endsWith("/")) {
+        inPrefix += "/";
+    }
+    if (outPrefix.length() > 0 && !outPrefix.endsWith("/")) {
+        outPrefix += "/";
+    }
+    
+    mqttBaseTopic = outPrefix + String(activeConfig.nodeId);
     mqttStatusTopic = mqttBaseTopic + "/status";
-    mqttCommandTopic = mqttBaseTopic + "/command";
+    mqttCommandTopic = inPrefix + String(activeConfig.nodeId) + "/command";
     mqttRadioTopic = mqttBaseTopic + "/radio";
     
-    debugLog("MQTT Base Topic: " + mqttBaseTopic);
+    debugLog("MQTT Topic Configuration:");
+    debugLog("  Incoming Prefix: " + inPrefix);
+    debugLog("  Outgoing Prefix: " + outPrefix);
+    debugLog("  Base Topic: " + mqttBaseTopic);
+    debugLog("  Command Topic: " + mqttCommandTopic);
 }
 
 void handleNormalModeLoop() {
@@ -308,8 +324,13 @@ void processRadioToMqtt(uint8_t senderId, uint8_t targetId, const String& messag
     String jsonString;
     serializeJson(doc, jsonString);
     
-    // Publish to MQTT
-    String topic = mqttRadioTopic + "/received/" + String(senderId);
+    // Use configured outgoing prefix for radio messages
+    String outPrefix = String(activeConfig.mqttTopicPrefixOut);
+    if (outPrefix.length() > 0 && !outPrefix.endsWith("/")) {
+        outPrefix += "/";
+    }
+    
+    String topic = outPrefix + String(activeConfig.nodeId) + "/radio/received/" + String(senderId);
     if (mqttClient.publish(topic.c_str(), jsonString.c_str())) {
         debugLog("Forwarded to MQTT topic: " + topic);
     } else {

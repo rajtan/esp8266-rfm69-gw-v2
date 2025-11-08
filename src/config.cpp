@@ -178,6 +178,8 @@ void printConfig(const GatewayConfig& config) {
     Serial.printf("WiFi SSID: %s\n", config.wifiSSID);
     Serial.printf("MQTT Server: %s:%d\n", config.mqttServer, config.mqttPort);
     Serial.printf("MQTT User: %s\n", config.mqttUser);
+    Serial.printf("MQTT Topic Prefix In: %s\n", config.mqttTopicPrefixIn);
+    Serial.printf("MQTT Topic Prefix Out: %s\n", config.mqttTopicPrefixOut);
     Serial.printf("AP Name: %s\n", config.apName);
     Serial.printf("AP User: %s\n", config.apUser);
     Serial.printf("Expert Mode: %s\n", config.expertMode ? "enabled" : "disabled");

@@ -191,7 +191,15 @@ void handleHomePage(AsyncWebServerRequest *request) {
         <p><strong>Node ID:</strong> )" + String(currentConfig.nodeId) + R"(</p>
         <p><strong>WiFi SSID:</strong> )" + String(currentConfig.wifiSSID) + R"(</p>
         <p><strong>DHCP:</strong> )" + String(currentConfig.dhcp ? "Enabled" : "Disabled") + R"(</p>
-        <p><strong>Expert Mode:</strong> )" + String(currentConfig.expertMode ? "Enabled" : "Disabled") + R"(</p>
+        <p><strong>Expert Mode:</strong> )" + String(currentConfig.expertMode ? "Enabled" : "Disabled") + R"(</p>)";
+    
+    if (currentConfig.expertMode) {
+        html += R"(
+        <p><strong>MQTT Topic In:</strong> )" + String(currentConfig.mqttTopicPrefixIn) + R"(</p>
+        <p><strong>MQTT Topic Out:</strong> )" + String(currentConfig.mqttTopicPrefixOut) + R"(</p>)";
+    }
+    
+    html += R"(
     </div>
     <h3>Quick Actions</h3>
     <button class="btn" onclick="location.href='/radio'">Configure Radio</button>
@@ -202,7 +210,6 @@ void handleHomePage(AsyncWebServerRequest *request) {
     
     request->send(200, "text/html", html);
 }
-
 void handleRadioPage(AsyncWebServerRequest *request) {
     String html = getHtmlHeader();
     html += R"(
@@ -406,6 +413,14 @@ void handleMqttPage(AsyncWebServerRequest *request) {
                 <label>MQTT Password:</label>
                 <input type="password" name="mqttPass" maxlength="64" value=")" + String(currentConfig.mqttPass) + R"(">
             </div>
+            <div class="form-group">
+                <label>MQTT Topic Prefix (Incoming):</label>
+                <input type="text" name="mqttTopicPrefixIn" maxlength="32" value=")" + String(currentConfig.mqttTopicPrefixIn) + R"(" placeholder="gateway/in/">
+            </div>
+            <div class="form-group">
+                <label>MQTT Topic Prefix (Outgoing):</label>
+                <input type="text" name="mqttTopicPrefixOut" maxlength="32" value=")" + String(currentConfig.mqttTopicPrefixOut) + R"(" placeholder="gateway/out/">
+            </div>
             <button type="submit" class="btn">Save MQTT Configuration</button>
         </form>
     </div>
@@ -445,11 +460,25 @@ void handleMqttSave(AsyncWebServerRequest *request) {
         currentConfig.mqttPass[MAX_PASSWORD_LENGTH] = '\0';
     }
     
+    // Add handling for new topic prefix fields
+    if (request->hasParam("mqttTopicPrefixIn", true)) {
+        String prefixIn = request->getParam("mqttTopicPrefixIn", true)->value();
+        strncpy(currentConfig.mqttTopicPrefixIn, prefixIn.c_str(), MAX_STRING_LENGTH);
+        currentConfig.mqttTopicPrefixIn[MAX_STRING_LENGTH] = '\0';
+    }
+    
+    if (request->hasParam("mqttTopicPrefixOut", true)) {
+        String prefixOut = request->getParam("mqttTopicPrefixOut", true)->value();
+        strncpy(currentConfig.mqttTopicPrefixOut, prefixOut.c_str(), MAX_STRING_LENGTH);
+        currentConfig.mqttTopicPrefixOut[MAX_STRING_LENGTH] = '\0';
+    }
+    
     if (saveConfig(currentConfig)) {
         message = "MQTT configuration saved successfully!";
     } else {
         message = "Error saving configuration";
     }
+    
     String html = getHtmlHeader();
     html += "<h2>MQTT Configuration</h2>";
     html += "<div class='" + String(message.startsWith("Error") ? "error" : "success") + "'>" + message + "</div>";
