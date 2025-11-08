@@ -45,7 +45,7 @@ A comprehensive IoT gateway that bridges RFM69 radio communication with MQTT, bu
 ### Radio Configuration
 - Network ID (1-255) (default: 100)
 - Node ID (1-255) - Expert mode only, (default: 1)
-- Encryption Key (16 characters) (default: samplekey12345)
+- Encryption Key (16 characters) (default: samplekey1234567)
 - Radio Power (0-31) - Expert mode only, (default:18, ~14dB, 30 ~20dB, approx.)
 
 ### Network Configuration
@@ -59,7 +59,7 @@ A comprehensive IoT gateway that bridges RFM69 radio communication with MQTT, bu
 - MQTT Username and Password (default: rw / readwrite)
 
 ### Access Point Configuration
-- AP Name (Expert mode only, default: "ESP8266-Gateway")
+- AP Name (Expert mode only, default: "MPSHUBV1")
 - AP Username and Password for captive portal
 
 ### System Configuration
@@ -81,8 +81,8 @@ pio run --target upload
 
 ### 3. Initial Configuration
 1. Power on the device
-2. Hold the BOOT button (GPIO0) for 5 seconds during startup
-3. Connect to the "ESP8266-Gateway" WiFi network
+2. Hold the BOOT button (GPIO3) for 5 seconds during startup
+3. Connect to the "MPSHUBV1" WiFi network
 4. Open a web browser (captive portal should auto-redirect)
 5. Login with default credentials (admin/password123)
 6. Configure your settings through the web interface
@@ -94,12 +94,12 @@ pio run --target upload
 The gateway uses the following MQTT topic structure:
 
 ```
-gateway/{nodeId}/status          # Gateway status reports
-gateway/{nodeId}/radio/received/{senderId}  # Incoming radio messages
-gateway/{nodeId}/command/send    # Send radio messages
-gateway/{nodeId}/command/status  # Request status update
-gateway/{nodeId}/command/reboot  # Remote reboot
-gateway/{nodeId}/response/send   # Send command responses
+<prefix in|out>/{nodeId}/status          # Gateway status reports
+<prefix in|out>/{nodeId}/radio/received/{senderId}  # Incoming radio messages
+<prefix in|out>/{nodeId}/command/send    # Send radio messages
+<prefix in|out>/{nodeId}/command/status  # Request status update
+<prefix in|out>/{nodeId}/command/reboot  # Remote reboot
+<prefix in|out>/{nodeId}/response/send   # Send command responses
 ```
 
 ### Radio Message Format
@@ -130,7 +130,7 @@ Publish to `gateway/{nodeId}/command/send`:
 ## Configuration Mode Activation
 
 Configuration mode can be activated by:
-1. Holding GPIO0 (BOOT button) LOW for 5 seconds during startup
+1. Holding GPIO3 (BOOT button) LOW for 5 seconds during startup
 2. EEPROM checksum validation failure (automatic)
 3. WiFi connection failure in normal mode (automatic fallback)
 
@@ -139,24 +139,26 @@ Configuration mode can be activated by:
 Customize build-time parameters in `platformio.ini`:
 
 ```ini
+build_flags = 
     -D ESP8266
     -D MQTT_MAX_PACKET_SIZE=512
 ;    -D RFM69_FREQUENCY=RF69_868MHZ  ; RFM69 frequency as per defines in RFM69/RFM69.h in LowPowrLab RFM69 library
-    -D ENABLE_EXPERT_CONFIG=false   ; Enable expert configuration by default
-    -D CONF_GPIO_NUM=0              ; GPIO pin for configuration mode (GPIO0/BOOT button)
+    -D CONF_GPIO_NUM=3              ; GPIO pin for configuration mode (GPIO0/BOOT button)
     -D CONF_GPIO_HOLD_MS=5000       ; Hold time in milliseconds
     -D CONF_GPIO_HOLD_STATE=LOW     ; Active state for configuration mode
-    '-D EXPERT_MODE_PASSWORD="IoT@1234"'  ; Expert mode password
+    -D DEF_CFG_ENABLE_EXPPERT_CONF=true   ; Enable expert configuration by default
+    '-D DEF_CFG_ENABLE_EXPERT_CONF_PASS="IamNxpert"'  ; Expert mode password
 ```
 
 ## Default Configuration
 
 The gateway ships with these default values:
-- Network ID: 1
+- Network ID: 100
 - Node ID: 1 (Gateway)
-- Encryption Key: "samplekey12345"
+- Encryption Key: "samplekey1234567"
 - WiFi: "your_wifi_ssid" / "your_wifi_password"
-- MQTT: "mqtt.broker.com:1883"
+- MQTT: "test.mosquitto.org:1884"
+- MQTT User: rw / MQTT Passwd: readwrite
 - AP Credentials: "admin" / "password123"
 
 ## Troubleshooting

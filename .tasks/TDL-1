@@ -1,9 +1,5 @@
 
-
-* how to go to expert mode
-* mqtt topic prefix for in and out messages
-* try various passwords for different modes, esp exp mode changes
-* try and test changing configs - try with changes in radio, network, ap and mqtt configs
+* test entering expert mode and expert mode saving of configs
 * heartbeat
 * wdt reset
 
