@@ -19,10 +19,10 @@ const char* HTML_HEADER PROGMEM = R"**(
 <!DOCTYPE html>
 <html>
 <head>
-    <title>ESP8266 RFM69 Gateway</title>
+    <title>MPS Hub Gateway</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        body { font-family: Arial, sans-serif; font-size: 140%; margin: 20px; background: #f0f0f0; }
+        body { font-family: Arial, sans-serif; font-size: 120%; margin: 20px; background: #f0f0f0; }
         .container { max-width: 800px; margin: 0 auto; background: white; padding: 10px; border-radius: 6px; }
         .header { text-align: center; color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
         .nav { margin: 20px 0; position: relative; }
@@ -521,7 +521,7 @@ void handleApSave(AsyncWebServerRequest *request) {
         message = "Error saving configuration";
     }
     String html = getHtmlHeader();
-    html += "<h2>Access Point Configuration</h2>";
+    html += "<h2>AP Configuration</h2>";
     html += "<div class='" + String(message.startsWith("Error") ? "error" : "success") + "'>" + message + "</div>";
     html += "<button class='btn' onclick='location.href=\"/ap\"'>Back to AP Config</button>";
     html += "<button class='btn' onclick='location.href=\"/\"'>Home</button>";
